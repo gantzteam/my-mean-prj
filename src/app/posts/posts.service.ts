@@ -12,8 +12,8 @@ export class PostsService {
 
     // ... => Spread Operator
     // [...this.posts] => Copy array (Immutable) จากต้นทาง -> ไปอาเรย์ใหม่ โดยเมื่อมีการแก้ไขอาเรย์ จะไม่ส่งผลกระทบกับอาเรย์ต้นทาง
-    console.log('Not use Spread= ' + this.posts);
-    console.log('Use Spread= ' + [...this.posts]);
+    // console.log('Not use Spread= ' + this.posts);
+    // console.log('Use Spread= ' + [...this.posts]);
 
     return [...this.posts];
     // return this.posts;
