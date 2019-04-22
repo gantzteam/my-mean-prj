@@ -6,11 +6,20 @@ const Post = require('./models/post');
 
 const app = express();
 // 9eDxEXP0KjZFvs3q
+// mongoose
+//   .connect(
+//     'mongodb+srv://kit:dqtfAXOL0RQ6f1Eq@cluster0-jdlxh.mongodb.net/test?retryWrites=true',
+//     { useNewUrlParser: true }
+//   )
+//   .then(() => {
+//     console.log('Connected to database!');
+//   })
+//   .catch(() => {
+//     console.log('Connection failed!');
+//   });
+
 mongoose
-  .connect(
-    'mongodb+srv://kit:dqtfAXOL0RQ6f1Eq@cluster0-jdlxh.mongodb.net/test?retryWrites=true',
-    { useNewUrlParser: true }
-  )
+  .connect('mongodb://localhost:27017/AngularCRUD')
   .then(() => {
     console.log('Connected to database!');
   })
