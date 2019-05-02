@@ -5,27 +5,29 @@ const mongoose = require('mongoose');
 const Post = require('./models/post');
 
 const app = express();
-// 9eDxEXP0KjZFvs3q
-// mongoose
-//   .connect(
-//     'mongodb+srv://kit:dqtfAXOL0RQ6f1Eq@cluster0-jdlxh.mongodb.net/test?retryWrites=true',
-//     { useNewUrlParser: true }
-//   )
-//   .then(() => {
-//     console.log('Connected to database!');
-//   })
-//   .catch(() => {
-//     console.log('Connection failed!');
-//   });
-
+// zclR3bACeR3dbEBX
 mongoose
-  .connect('mongodb://localhost:27017/node-angular')
+  .connect(
+    'mongodb+srv://kit:zclR3bACeR3dbEBX@cluster0-jdlxh.mongodb.net/test?retryWrites=true',
+    { useNewUrlParser: true }
+  )
   .then(() => {
     console.log('Connected to database!');
   })
   .catch(() => {
     console.log('Connection failed!');
   });
+
+  // คำสั่ง Run Server : npm run start:server
+
+// mongoose
+//   .connect('mongodb://localhost:27017/node-angular')
+//   .then(() => {
+//     console.log('Connected to database!');
+//   })
+//   .catch(() => {
+//     console.log('Connection failed!');
+//   });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -39,7 +41,7 @@ app.use((req, res, next) => {
   );
   res.setHeader(
     'Access-Control-Allow-Methods',
-    'GET,POST,PATCH,DELETE,OPTIONS'
+    'GET,POST,PATCH,PUT,DELETE,OPTIONS'
   );
   next();
 });
@@ -55,6 +57,18 @@ app.post('/api/posts', (req, res, next) => {
       postId: createdPost._id
     });
   });
+});
+
+app.put('/api/posts/:id',(req, res, next) => {
+  const post = new Post({
+    _id: req.body.id,
+    title: req.body.title,
+    content: req.body.content
+  });
+  Post.updateOne({ _id: req.params.id },post).then(result => {
+      console.log(result);
+      res.status(200).json({ message: 'Update successful!' });
+    });
 });
 
 app.get('/api/posts', (req, res, next) => {

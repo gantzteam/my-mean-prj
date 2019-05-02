@@ -1,6 +1,9 @@
-import { Component } from '@angular/core'; // EventEmitter, Output // ** เปลี่ยนไปใช้ Service
-import { PostsService } from './../posts.service';
+import { Component, OnInit } from '@angular/core'; // EventEmitter, Output // ** เปลี่ยนไปใช้ Service
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { NgForm } from '@angular/forms';
+
+import { PostsService } from './../posts.service';
+import { Post } from '../post.model';
 
 // import { Post } from '../post.model'; // ** เปลี่ยนไปใช้ Service
 
@@ -9,16 +12,42 @@ import { NgForm } from '@angular/forms';
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css']
 })
-export class PostCreateComponent {
+export class PostCreateComponent implements OnInit {
   enteredTitle = '';
   enteredContent = '';
+  post: Post;
+  private mode = 'create';
+  private postId: string;
   // @Output() postCreated = new EventEmitter<Post>(); // ** เปลี่ยนไปใช้ Service
 
-  constructor(public postsServcice: PostsService) {}
+  constructor(public postsServcice: PostsService, public route: ActivatedRoute) {}
 
-  onAddPost(form: NgForm) {
+ngOnInit() {
+  this.route.paramMap.subscribe(
+    (paramMap: ParamMap) => {
+      if (paramMap.has('postId')) {
+        // postId ชื่อเดียวกับที่ประกาศใน app-routing.module.ts
+        this.mode = 'edit';
+        this.postId = paramMap.get('postId');
+        this.post = this.postsServcice.getPost(this.postId); // เก็บค่าตัวแปร id จาก model
+      } else {
+        this.mode = 'create';
+        this.postId = null;
+      }
+    }
+  );
+}
+
+  onSavePost(form: NgForm) {
     if (form.invalid) {
       return;
+    }
+    if (this.mode === 'create') {
+      console.log('create');
+      this.postsServcice.addPost(form.value.title, form.value.content);
+    } else {
+      console.log('edit');
+      this.postsServcice.updatePost(this.postId, form.value.title, form.value.content);
     }
     // const post: Post = {
     //   title: form.value.title,
@@ -28,7 +57,6 @@ export class PostCreateComponent {
     // ** เปลี่ยนไปใช้ Service
 
     // this.postsServcice.addPost(post.title, post.content);
-    this.postsServcice.addPost(form.value.title, form.value.content);
     form.resetForm();
   }
 }
