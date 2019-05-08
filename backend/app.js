@@ -2,32 +2,32 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const Post = require('./models/post');
+const postsRoutes = require('./routes/posts');
 
 const app = express();
+// คำสั่ง Run Server : npm run start:server
 // zclR3bACeR3dbEBX
-mongoose
-  .connect(
-    'mongodb+srv://kit:zclR3bACeR3dbEBX@cluster0-jdlxh.mongodb.net/test?retryWrites=true',
-    { useNewUrlParser: true }
-  )
-  .then(() => {
-    console.log('Connected to database!');
-  })
-  .catch(() => {
-    console.log('Connection failed!');
-  });
-
-  // คำสั่ง Run Server : npm run start:server
-
 // mongoose
-//   .connect('mongodb://localhost:27017/node-angular')
+//   .connect(
+//     'mongodb+srv://kit:zclR3bACeR3dbEBX@cluster0-jdlxh.mongodb.net/test?retryWrites=true',
+//     { useNewUrlParser: true }
+//   )
 //   .then(() => {
 //     console.log('Connected to database!');
 //   })
 //   .catch(() => {
 //     console.log('Connection failed!');
 //   });
+
+// connect to local db
+mongoose
+  .connect('mongodb://localhost:27017/node-angular', { useNewUrlParser: true })
+  .then(() => {
+    console.log('Connected to database!');
+  })
+  .catch(() => {
+    console.log('Connection failed!');
+  });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -46,64 +46,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/api/posts', (req, res, next) => {
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content
-  });
-  post.save().then(createdPost => {
-    res.status(201).json({
-      message: 'Post added successfully',
-      postId: createdPost._id
-    });
-  });
-});
-
-app.put('/api/posts/:id',(req, res, next) => {
-  const post = new Post({
-    _id: req.body.id,
-    title: req.body.title,
-    content: req.body.content
-  });
-  Post.updateOne({ _id: req.params.id },post).then(result => {
-      console.log(result);
-      res.status(200).json({ message: 'Update successful!' });
-    });
-});
-
-app.get('/api/posts', (req, res, next) => {
-  // const posts = [
-  //   {
-  //     id: 'asdasdsadas',
-  //     title: 'First server-side post',
-  //     content: 'This is coming from the server!'
-  //   },
-  //   {
-  //     id: 'rryrtyrtyry',
-  //     title: 'Second server-side post',
-  //     content: 'This is coming from the server!'
-  //   }
-  // ];
-  // เปลี่ยนไปดึงจาก db
-  Post.find()
-    .then(documents => {
-      res.status(200).json({
-        message: 'Posts fetched successfully!',
-        posts: documents
-      });
-    })
-    .catch(() => {});
-  //   res.send('Hello from express!'); // return response
-});
-
-app.delete('/api/posts/:id', (req, res, next) => {
-  //console.log(req.params.id);
-  Post.deleteOne({ _id: req.params.id }).then(result => {
-    console.log(result);
-  });
-  res.status(200).json({
-    message: 'Posts deleted!'
-  });
-});
+app.use('/api/posts', postsRoutes);
 
 module.exports = app;

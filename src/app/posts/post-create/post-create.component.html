@@ -1,5 +1,6 @@
 <mat-card>
-  <form (submit)="onSavePost(postForm)" #postForm="ngForm">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form (submit)="onSavePost(postForm)" #postForm="ngForm" *ngIf="!isLoading">
     <mat-form-field>
       <input
         matInput
@@ -10,7 +11,7 @@
         minlength="3"
         placeholder="Post Title"
         #title="ngModel"
-      />
+      /><!-- ?: นี่เรียกว่า Elvis Operator ถ้าข้างหน้าไม่เป็น null ใช้ข้างหน้า ถ้าเป็น null ใช้ข้างหลัง (Kotlin)-->
       <mat-error *ngIf="title.invalid">Please enter a post title.</mat-error>
     </mat-form-field>
     <mat-form-field>

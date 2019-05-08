@@ -16,38 +16,55 @@ export class PostCreateComponent implements OnInit {
   enteredTitle = '';
   enteredContent = '';
   post: Post;
+  isLoading = false;
   private mode = 'create';
   private postId: string;
   // @Output() postCreated = new EventEmitter<Post>(); // ** เปลี่ยนไปใช้ Service
 
-  constructor(public postsServcice: PostsService, public route: ActivatedRoute) {}
+  constructor(
+    public postsServcice: PostsService,
+    public route: ActivatedRoute
+  ) {}
 
-ngOnInit() {
-  this.route.paramMap.subscribe(
-    (paramMap: ParamMap) => {
+  ngOnInit() {
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postId')) {
         // postId ชื่อเดียวกับที่ประกาศใน app-routing.module.ts
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
-        this.post = this.postsServcice.getPost(this.postId); // เก็บค่าตัวแปร id จาก model
+        // this.post = this.postsServcice.getPost(this.postId); // เก็บค่าตัวแปร id จาก model
+        //
+        this.isLoading = true;
+        this.postsServcice.getPost(this.postId).subscribe(postData => {
+          this.isLoading = false;
+          this.post = {
+            id: postData._id,
+            title: postData.title,
+            content: postData.content
+          };
+        });
       } else {
         this.mode = 'create';
         this.postId = null;
       }
-    }
-  );
-}
+    });
+  }
 
   onSavePost(form: NgForm) {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;
     if (this.mode === 'create') {
       console.log('create');
       this.postsServcice.addPost(form.value.title, form.value.content);
     } else {
       console.log('edit');
-      this.postsServcice.updatePost(this.postId, form.value.title, form.value.content);
+      this.postsServcice.updatePost(
+        this.postId,
+        form.value.title,
+        form.value.content
+      );
     }
     // const post: Post = {
     //   title: form.value.title,
