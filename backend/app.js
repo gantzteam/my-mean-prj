@@ -6,28 +6,28 @@ const postsRoutes = require('./routes/posts');
 
 const app = express();
 // คำสั่ง Run Server : npm run start:server
-// zclR3bACeR3dbEBX
-// mongoose
-//   .connect(
-//     'mongodb+srv://kit:zclR3bACeR3dbEBX@cluster0-jdlxh.mongodb.net/test?retryWrites=true',
-//     { useNewUrlParser: true }
-//   )
-//   .then(() => {
-//     console.log('Connected to database!');
-//   })
-//   .catch(() => {
-//     console.log('Connection failed!');
-//   });
-
-// connect to local db
+// 
 mongoose
-  .connect('mongodb://localhost:27017/node-angular', { useNewUrlParser: true })
+  .connect(
+    'mongodb+srv://kit:wiX54m3ppnhFgC6C@cluster0-jdlxh.mongodb.net/test?retryWrites=true',
+    { useNewUrlParser: true }
+  )
   .then(() => {
     console.log('Connected to database!');
   })
   .catch(() => {
     console.log('Connection failed!');
   });
+
+// connect to local db
+// mongoose
+//   .connect('mongodb://localhost:27017/node-angular', { useNewUrlParser: true })
+//   .then(() => {
+//     console.log('Connected to database!');
+//   })
+//   .catch(() => {
+//     console.log('Connection failed!');
+//   });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

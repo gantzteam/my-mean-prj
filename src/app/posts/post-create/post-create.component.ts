@@ -5,6 +5,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'; // NgForm,
 import { PostsService } from './../posts.service';
 import { Post } from '../post.model';
 
+import { mimeType } from './mime-type.validator';
+
 // import { Post } from '../post.model'; // ** เปลี่ยนไปใช้ Service
 
 @Component({
@@ -36,7 +38,7 @@ export class PostCreateComponent implements OnInit {
       content: new FormControl(null, {
         validators: [Validators.required]
       }),
-      image: new FormControl(null, { validators: [Validators.required] })
+      image: new FormControl(null, { validators: [Validators.required], asyncValidators: [mimeType] })
     });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postId')) {
@@ -55,7 +57,8 @@ export class PostCreateComponent implements OnInit {
           };
           this.form.setValue({
             title: this.post.title,
-            content: this.post.content
+            content: this.post.content,
+            image: null
           });
         });
       } else {
@@ -67,6 +70,7 @@ export class PostCreateComponent implements OnInit {
 
   onImagePicked(event: Event) {
     const file = (event.target as HTMLInputElement).files[0];
+    // console.log(file);
     this.form.patchValue({ image: file });
     this.form.get('image').updateValueAndValidity();
     const reader = new FileReader();
