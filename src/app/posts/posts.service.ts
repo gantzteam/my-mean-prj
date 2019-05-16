@@ -11,10 +11,10 @@ import { stringify } from '@angular/compiler/src/util';
 @Injectable({ providedIn: 'root' })
 export class PostsService {
   private posts: Post[] = [];
-  private postsUpdated = new Subject<Post[]>();
+  private postsUpdated = new Subject<{ posts: Post[]; postCount: number }>();
 
   constructor(private http: HttpClient, private router: Router) {}
-  getPosts() {
+  getPosts(postsPerPage: number, currentPage: number) {
     // return this.posts;
     // ... => Spread Operator
     // [...this.posts] => Copy array (Immutable) จากต้นทาง -> ไปอาเรย์ใหม่ โดยเมื่อมีการแก้ไขอาเรย์ จะไม่ส่งผลกระทบกับอาเรย์ต้นทาง
@@ -23,23 +23,32 @@ export class PostsService {
     // return [...this.posts]; // ** เปลี่ยนไปใช้ HttpClient
     // return this.posts;
 
+    const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
     this.http
-      .get<{ message: string; posts: any }>('http://localhost:3000/api/posts')
+      .get<{ message: string; posts: any; maxPosts: number }>(
+        'http://localhost:3000/api/posts' + queryParams
+      )
       .pipe(
         map(postData => {
-          return postData.posts.map(post => {
-            return {
-              title: post.title,
-              content: post.content,
-              id: post._id,
-              imagePath: post.imagePath
-            };
-          });
+          return {
+            posts: postData.posts.map(post => {
+              return {
+                title: post.title,
+                content: post.content,
+                id: post._id,
+                imagePath: post.imagePath
+              };
+            }),
+            maxPosts: postData.maxPosts
+          };
         })
       )
-      .subscribe(transformedPosts => {
-        this.posts = transformedPosts;
-        this.postsUpdated.next([...this.posts]);
+      .subscribe(transformedPostData => {
+        this.posts = transformedPostData.posts;
+        this.postsUpdated.next({
+          posts: [...this.posts],
+          postCount: transformedPostData.maxPosts
+        });
       });
   }
 

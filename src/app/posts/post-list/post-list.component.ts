@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'; // ,Input // ** เปลี่ยนไป add ผ่าน Service แทน
+import { PageEvent } from '@angular/material';
 import { PostsService } from './../posts.service';
 
 import { Post } from '../post.model';
@@ -16,8 +17,12 @@ export class PostListComponent implements OnInit, OnDestroy {
   //   { title: "Third Post", content: "This is the third post's content" }
   // ];
   // @Input() posts: Post[] = []; // List of posts  // ** เปลี่ยนไป add ผ่าน Service แทน
-  isLoading = false;
   posts: Post[] = []; // List of posts
+  isLoading = false;
+  totalPosts = 10;
+  postsPerPage = 2;
+  currentPage = 1;
+  pageSizeOptions = [1, 2, 5, 10];
   private postsSub: Subscription;
 
   constructor(public postsService: PostsService) {}
@@ -25,13 +30,20 @@ export class PostListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // this.posts = this.postsService.getPosts();
     this.isLoading = true;
-    this.postsService.getPosts();
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.postsSub = this.postsService
       .getPostUpdatedListener()
       .subscribe((response: Post[]) => {
         this.isLoading = false;
         this.posts = response;
       });
+  }
+
+  onChangedPage(pageData: PageEvent) {
+    this.isLoading = true;
+    this.currentPage = pageData.pageIndex + 1;
+    this.postsPerPage = pageData.pageSize;
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
   }
 
   onDelete(postId: string) {
