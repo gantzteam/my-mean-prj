@@ -4,28 +4,30 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const postsRoutes = require('./routes/posts');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
-// mongoose
-//   .connect(
-//     "mongodb+srv://max:QuBqs0T45GDKPlIG@cluster0-ntrwp.mongodb.net/node-angular?retryWrites=true"
-//   )
-//   .then(() => {
-//     console.log("Connected to database!");
-//   })
-//   .catch(() => {
-//     console.log("Connection failed!");
-//   });
-
+// 7Olhbfd3LUUlprUZ
 mongoose
-  .connect('mongodb://localhost:27017/node-angular', { useNewUrlParser: true })
+  .connect(
+    "mongodb+srv://kit:7Olhbfd3LUUlprUZ@cluster0-jdlxh.mongodb.net/test",{ useNewUrlParser: true }
+  )
   .then(() => {
-    console.log('Connected to database!');
+    console.log("Connected to database!");
   })
   .catch(() => {
-    console.log('Connection failed!');
+    console.log("Connection failed!");
   });
+
+// mongoose
+//   .connect('mongodb://localhost:27017/node-angular', { useNewUrlParser: true })
+//   .then(() => {
+//     console.log('Connected to database!');
+//   })
+//   .catch(() => {
+//     console.log('Connection failed!');
+//   });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -45,5 +47,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/posts', postsRoutes);
+app.use('/api/user',userRoutes);
 
 module.exports = app;
